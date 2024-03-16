@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codemirror example</title>
+    <link rel="stylesheet" href="codemirror.css">
+</head>
+
+<body>
+
+
+    <textarea name="" id="code" cols="30" rows="10"></textarea>
+
+</body>
+
+
+<script src="./codemirror.js"></script>
+<script src="./javascript.js"></script>
+<script>
+
+    let editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+        lineNumbers: true,
+        extraKeys: { "Ctrl-Space": "autocomplete" },
+        mode: "javascript",
+        matchBrackets: true,
+        autoCloseBrackets: true,
+    });
+</script>
+
+</html>
