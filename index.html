@@ -96,13 +96,23 @@
             border: 1px solid black;
         }
 
+        #presets {
+            padding: 4px;
+            background-color: #f7f7f7;
+            border-top: 1px solid #dddddd;
+            overflow-x: scroll;
+            display: flex;
+            flex-direction: row;
+        }
+
         .chip {
-            font-size: 9pt;
-            margin-left: 3px;
-            padding: 4px 6px;
+            font-size: 8pt;
+            padding: 4px 10px;
             margin: 2px;
-            border-radius: 4px;
+            margin-left: 3px;
+            border-radius: 15em;
             border: 1px solid lightgrey;
+            white-space: nowrap;
         }
 
         .CodeMirror {
@@ -135,6 +145,7 @@
                 display: flex;
                 flex-direction: column;
                 max-width: 50%;
+                width: 50%;
 
                 &>div {
                     flex: 1;
@@ -181,7 +192,13 @@
         <div class="c">
             <textarea name="q" style="flex: 1;" spellcheck="false" id="func-input" cols="30" rows="12"
                 placeholder="Function…"></textarea>
-            <button onclick="run">Run (ctrl-space)</button>
+
+
+            <div style="display: flex; flex-direction: column; flex: 0;">
+
+                <div id="presets"></div>
+                <button onclick="run">Run (ctrl-space)</button>
+            </div>
         </div>
         <div class="c c-result">
             <div>
@@ -220,16 +237,6 @@
             document.body.removeChild(x);
         };
 
-        const getEl = (id) => document.getElementById(id);
-        const u = {
-            input: getEl("input"),
-            funcInput: getEl("func-input"),
-            out: getEl("output"),
-            executionTime: getEl("execution-time"),
-            inputSize: getEl("input-size"),
-            outputSize: getEl("output-size"),
-        };
-
         const debounce = (callback, wait) => {
             let timerId;
             return (...args) => {
@@ -239,6 +246,41 @@
                 }, wait);
             };
         };
+
+
+        const getEl = (id) => document.getElementById(id);
+        const u = {
+            input: getEl("input"),
+            funcInput: getEl("func-input"),
+            out: getEl("output"),
+            executionTime: getEl("execution-time"),
+            inputSize: getEl("input-size"),
+            outputSize: getEl("output-size"),
+            presets: getEl("presets")
+        };
+
+        const presets = {
+            "Parse JSON": "KGlucHV0KSA9PiB7Cgljb25zdCBqc29uID0gSlNPTi5wYXJzZShpbnB1dCkKICAKICAKICByZXR1cm4gSlNPTi5zdHJpbmdpZnkoanNvbixudWxsMikKfTs=",
+            "Trim lines": "KGlucHV0KSA9PgogIGlucHV0CiAgICAuc3BsaXQoIlxuIikKICAgIC5tYXAoKHgpID0+IHgudHJpbSgpKQogICAgLmpvaW4oIlxuIik7",
+            "Get unique lines": "KGlucHV0KSA9PiB7CiAgY29uc3QgbGluZXMgPSBpbnB1dAogICAgLnNwbGl0KCJcbiIpCiAgICAuc29ydCgpCiAgICAuZmlsdGVyKCh4KSA9PiB4KTsKCiAgcmV0dXJuIFsuLi5uZXcgU2V0KGxpbmVzKV0uam9pbigiXG4iKTsKfTs=",
+            "Wrap lines in quotes": "KGlucHV0KSA9PgogIGlucHV0CiAgICAuc3BsaXQoIlxuIikKICAgIC5zb3J0KCkKICAgIC5maWx0ZXIoKHgpID0+IHgpCiAgICAubWFwKCh4KSA9PiBgIiR7eH0iLGApCiAgICAuam9pbigiXG4iKTs=",
+            "To base64": "KHgpID0+IGJ0b2EoeCk7",
+            "From base64": "KHgpID0+IGF0b2IoeCk7",
+
+        };
+
+        const insertPresetDeep = (key) => {
+            editor.getDoc().setValue(atob(presets[key]));
+            _run();
+        };
+
+        Object.keys(presets).forEach((k) => {
+            const button = document.createElement("button");
+            button.onclick = () => insertPresetDeep(k);
+            button.className = "chip";
+            button.innerText = k;
+            u.presets.appendChild(button);
+        });
 
         const editor = CodeMirror.fromTextArea(document.getElementById("func-input"), {
             lineNumbers: true,
