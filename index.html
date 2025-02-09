@@ -1,244 +1,282 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Eval</title>
-    <link
-      rel="icon"
-      type="image/svg+xml"
-      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22256%22 height=%22256%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23fdfdfd%22></rect><text x=%2250%%22 y=%2250%%22 dominant-baseline=%22central%22 text-anchor=%22middle%22 font-size=%2270%22>💻</text></svg>"
-    />
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22256%22 height=%22256%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23fdfdfd%22></rect><text x=%2250%%22 y=%2250%%22 dominant-baseline=%22central%22 text-anchor=%22middle%22 font-size=%2270%22>💻</text></svg>" />
     <link rel="stylesheet" href="./codemirror/codemirror.css" />
     <script src="./codemirror/codemirror.js"></script>
     <script src="./codemirror/javascript.js"></script>
     <script src="./codemirror/matchbrackets.js"></script>
     <script src="./codemirror/closebrackets.js"></script>
     <style>
-      :root {
-        --color-border: grey;
-        --color-background: #ffffff;
-        --color-text: #161616;
-        --border-radius: 0.25em;
-        --font-family: Lexend, system-ui, -apple-system, BlinkMacSystemFont,
-          "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
-          "Helvetica Neue", sans-serif;
-        --font-family-monospace: "DM Mono";
-        --font-size: 9.5pt;
-      }
+        :root {
+            --color-background: #ffffff;
+            --color-text: #161616;
+            --font-family: Lexend, system-ui, -apple-system, BlinkMacSystemFont,
+                "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+                sans-serif;
+            --font-family-monospace: 'DM Mono', "Noto Sans Mono", "Roboto Mono" monospace;
+            --font-size: 9.5pt;
+        }
 
-      body {
-        background-color: var(--color-background);
-        color: var(--color-text);
-        font-family: var(--font-family);
-        margin: 0;
-      }
+        html,
+        body {
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
 
-      .content-container {
-        width: 100%;
-        max-width: 100%;
-        display: flex;
-        width: 100%;
-        align-items: center;
-        flex-direction: column;
-        height: 100vh;
-        margin: 0;
-        padding: 0;
-      }
+        body {
+            background-color: var(--color-background);
+            color: var(--color-text);
+            font-family: var(--font-family);
+        }
 
-      .content {
-        max-width: 1000px;
-        width: 100%;
-      }
+        input,
+        textarea {
+            font-family: var(--font-family-monospace);
+            font-size: var(--font-size);
+        }
 
-      input,
-      textarea {
-        font-family: "DM Mono", monospace;
-        font-size: var(--font-size);
-      }
+        input,
+        label {
+            display: block;
+            padding: 0;
+            background-color: var(--color-background);
+        }
 
-      input,
-      label {
-        display: block;
-        padding: 0;
-        background-color: var(--color-background);
-      }
+        button {
+            appearance: none;
+            background-color: #fafbfc;
+            border: 1px solid rgba(27, 31, 35, 0.15);
+            box-shadow: rgba(27, 31, 35, 0.04) 0 1px 0,
+                rgba(255, 255, 255, 0.25) 0 1px 0 inset;
+            box-sizing: border-box;
+            color: #24292e;
+            cursor: pointer;
+            display: inline-block;
+            font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial,
+                sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 20px;
+            padding: 6px 16px;
+            position: relative;
+            transition: background-color 0.2s cubic-bezier(0.3, 0, 0.5, 1);
+            user-select: none;
+            -webkit-user-select: none;
+        }
 
-      select {
-        height: 34px;
-        border: 1px solid var(--color-border);
-        border-radius: var(--border-radius);
-        background-color: var(--color-background);
-      }
+        button:active {
+            background-color: #edeff2;
+            box-shadow: rgba(225, 228, 232, 0.2) 0 1px 0 inset;
+            transition: none 0s;
+        }
 
-      textarea {
-        background-color: var(--color-background);
-        border: 1px solid var(--color-border);
-        border-radius: var(--border-radius);
-        font-size: 11pt;
-        text-wrap: nowrap;
-        margin: 8px 22px 22px 22px;
-        width: 100%;
-      }
+        button:focus {
+            outline: 1px transparent;
+        }
 
-      input {
-        border: 1px solid var(--color-border);
-        border-radius: var(--border-radius);
-        padding: 5px 0;
-        height: 22px;
-        width: 100%;
-        min-width: 60px;
-        padding-left: 5px;
-        font-family: var(--font-family-monospace);
-      }
+        button:before {
+            display: none;
+        }
 
-      button {
-        padding: 4px;
-        margin: 4px;
-        height: 32px;
-      }
+        button:-webkit-details-marker {
+            display: none;
+        }
 
-      .CodeMirror {
-        width: 100%;
-        height: 400px;
-      }
 
-      .chip {
-        font-size: 10pt;
-        margin-left: 3px;
-        padding: 2px 8px;
-        border-radius: 20px;
-        border: 1px solid lightgrey;
-      }
+        table,
+        tr {
+            border: 1px solid black;
+        }
 
-      #presets {
-        display: flex;
-      }
+        .chip {
+            font-size: 9pt;
+            margin-left: 3px;
+            padding: 4px 6px;
+            margin: 2px;
+            border-radius: 4px;
+            border: 1px solid lightgrey;
+        }
+
+        .CodeMirror {
+            max-width: 100%;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: row;
+            height: 100%;
+
+            & textarea {
+                background-color: #0e1019;
+                border: none;
+                box-sizing: border-box;
+                color: white;
+                font-size: 11pt;
+                height: 95%;
+                margin: 0;
+                outline: none;
+                padding: 0;
+                text-wrap: nowrap;
+                width: 100%;
+                padding: 8px;
+                resize: none;
+            }
+
+            &>.c {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                max-width: 50%;
+
+                &>div {
+                    flex: 1;
+                }
+
+                &>details {
+                    padding: 12px;
+                }
+            }
+
+            &>.c-result {
+                background-color: #0e1019;
+                padding: 8px 12px;
+                color: white;
+
+                &>div {
+                    display: flex;
+                    flex-direction: column;
+                    resize: vertical;
+                    overflow: auto;
+                    flex: unset;
+                    height: 50%;
+
+                    & b,
+                    span {
+                        padding: 8px 0;
+                        font-size: 10pt;
+                        color: #c0c0c0;
+                    }
+                }
+
+                &>div:nth-child(1) {
+                    border-bottom: 1px solid #5e5e5e;
+                    padding-bottom: 8px;
+                    margin-bottom: 8px;
+                }
+            }
+        }
     </style>
-  </head>
+</head>
 
-  <body>
-    <div class="content-container">
-      <div class="content">
-        <div style="display: flex; flex-direction: column; align-items: center">
-          <textarea
-            name="q"
-            spellcheck="false"
-            oninput="run()"
-            id="input"
-            cols="30"
-            rows="6"
-            placeholder="Input…"
-          ></textarea>
-          <textarea
-            name="q"
-            spellcheck="false"
-            id="func-input"
-            cols="30"
-            rows="12"
-            placeholder="Func…"
-          ></textarea>
-
-          <div id="presets"></div>
-          <div style="display: flex; flex-direction: column">
-            <div style="display: flex; justify-content: center">
-              <button class="chip" style="width: 128px" onclick="run()">
-                Run (ctrl+space)
-              </button>
-              <button class="chip" onclick="copyFuncs.input()">
-                Copy input
-              </button>
-              <button class="chip" onclick="copyFuncs.output()">
-                Copy output
-              </button>
-            </div>
-          </div>
-          <textarea
-            spellcheck="false"
-            name="q"
-            id="output"
-            cols="30"
-            rows="12"
-            placeholder="Output…"
-          ></textarea>
+<body>
+    <div class="container">
+        <div class="c">
+            <textarea name="q" style="flex: 1;" spellcheck="false" id="func-input" cols="30" rows="12"
+                placeholder="Function…"></textarea>
+            <button onclick="run">Run (ctrl-space)</button>
         </div>
-      </div>
-      <span style="font-size: 9pt" id="execution-time"></span>
+        <div class="c c-result">
+            <div>
+                <div>
+                    <b>Input:</b>
+                    <span id="input-size"></span>
+                </div>
+                <textarea name="q" spellcheck="false" oninput="run()" id="input"></textarea>
+            </div>
+            <div>
+                <div>
+                    <b>Output:</b>
+                    <span id="output-size"></span>
+                </div>
+                <textarea spellcheck="false" name="q" id="output"></textarea>
+            </div>
+            <span style="font-size: 9pt" id="execution-time"></span>
+        </div>
     </div>
-    <div id="out"></div>
 
     <script>
-      const copy = (arg) => {
-        let x = document.createElement("textarea");
-        x.value = arg;
-        x.style.top = "0";
-        x.style.left = "0";
-        x.style.position = "fixed";
-        document.body.appendChild(x);
-        x.focus();
-        x.select();
-        try {
-          document.execCommand("copy");
-        } catch (err) {
-          console.error("Fallback: Oops, unable to copy", err);
-        }
-        document.body.removeChild(x);
-      };
-
-      const getEl = (id) => document.getElementById(id);
-      const u = {
-        input: getEl("input"),
-        out: getEl("output"),
-        executionTime: getEl("execution-time"),
-      };
-
-      const copyFuncs = {
-        input: () => copy(u.input.value),
-        output: () => copy(u.out.value),
-      };
-
-      const debounce = (callback, wait) => {
-        let timerId;
-        return (...args) => {
-          clearTimeout(timerId);
-          timerId = setTimeout(() => {
-            callback(...args);
-          }, wait);
+        const copy = (arg) => {
+            let x = document.createElement("textarea");
+            x.value = arg;
+            x.style.top = "0";
+            x.style.left = "0";
+            x.style.position = "fixed";
+            document.body.appendChild(x);
+            x.focus();
+            x.select();
+            try {
+                document.execCommand("copy");
+            } catch (err) {
+                console.error("Fallback: Oops, unable to copy", err);
+            }
+            document.body.removeChild(x);
         };
-      };
 
-      const editor = CodeMirror.fromTextArea(
-        document.getElementById("func-input"),
-        {
-          lineNumbers: true,
-          mode: "javascript",
-          matchBrackets: true,
-          autoCloseBrackets: true,
-          tabSize: 2,
-        }
-      );
+        const getEl = (id) => document.getElementById(id);
+        const u = {
+            input: getEl("input"),
+            funcInput: getEl("func-input"),
+            out: getEl("output"),
+            executionTime: getEl("execution-time"),
+            inputSize: getEl("input-size"),
+            outputSize: getEl("output-size"),
+        };
 
-      editor.getDoc().setValue("(input) => {\n    return input;\n}");
+        const debounce = (callback, wait) => {
+            let timerId;
+            return (...args) => {
+                clearTimeout(timerId);
+                timerId = setTimeout(() => {
+                    callback(...args);
+                }, wait);
+            };
+        };
 
-      editor.setOption("extraKeys", {
-        "Ctrl-Space": function (cm) {
-          _run();
-          return cm;
-        },
-      });
+        const editor = CodeMirror.fromTextArea(document.getElementById("func-input"), {
+            lineNumbers: true,
+            mode: "javascript",
+            matchBrackets: true,
+            autoCloseBrackets: true,
+            tabSize: 2,
+        })
 
-      const _run = () => {
-        const startTime = performance.now();
-        const original = u.input.value;
-        const func = eval(editor.getValue());
-        const out = func(original);
-        const endTime = performance.now();
-        u.executionTime.innerText = `Execution time: ${endTime - startTime} ms`;
-        u.out.value = `${out}`;
-      };
+        editor.setOption("extraKeys", {
+            "Ctrl-Space": function (cm) {
+                _run();
+                return cm;
+            },
+        });
 
-      const run = debounce(_run, 400);
+        const placeholderCode = "(input) => {\n  const lines = input.split(\"\\n\").filter((x) => x);\n  const uniqueLines = [...new Set(lines)];\n\n  return uniqueLines.join(\"\\n\");\n};"
+
+        editor.setValue(placeholderCode)
+
+        const _run = () => {
+            const startTime = performance.now();
+            const original = u.input.value;
+            const func = eval(editor.getValue());
+            const out = func(original);
+            const endTime = performance.now();
+
+            u.executionTime.innerText = `Execution time: ${endTime - startTime} ms`;
+            u.out.value = `${out}`;
+
+            const percentageOfOriginal = (out.length / original.length) * 100
+            const percentageOfOriginalStr = !isNaN(percentageOfOriginal) ? `, ${Math.ceil(percentageOfOriginal)}% of original` : ""
+            u.inputSize.innerText = `${original.length} characters, ${original.split("\n").length} lines`
+            u.outputSize.innerText = `${out.length} characters, ${out.split("\n").length} lines${percentageOfOriginalStr}`
+        };
+
+        const run = debounce(_run, 400);
     </script>
-  </body>
+</body>
+
 </html>
