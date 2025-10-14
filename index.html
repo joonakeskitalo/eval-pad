@@ -197,7 +197,11 @@
             <div style="display: flex; flex-direction: column; flex: 0;">
 
                 <div id="presets"></div>
-                <button onclick="run">Run (ctrl-space)</button>
+
+                <div style="display: flex; flex-direction: row; flex: 1;">
+                    <button style="flex: 1;" onclick="setUrlHash()">Share script</button>
+                    <button style="flex: 1;" onclick="run">Run (shift-space)</button>
+                </div>
             </div>
         </div>
         <div class="c c-result">
@@ -290,7 +294,6 @@
                 removeUrlHash();
                 return;
             }
-            setUrlHash(script)
             const startTime = performance.now();
             const original = u.input.value;
             const func = eval(script);
@@ -312,10 +315,15 @@
             window.location = window.location.href.split('#')[0]
         }
 
-        const setUrlHash = (script) => {
+        const setUrlHash = () => {
+            const script = editor.getValue();
+            if (!script) {
+                return;
+            }
             const encoded = decodeURIComponent(btoa(script));
             window.location.hash = `#${encoded}`
         }
+
         const getScriptFromUrlHash = () => {
             const hash = window.location.hash.substring(1);
             if (hash) {
