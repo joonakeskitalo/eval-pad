@@ -318,6 +318,7 @@
         const setUrlHash = () => {
             const script = editor.getValue();
             if (!script) {
+                removeUrlHash();
                 return;
             }
             const encoded = decodeURIComponent(btoa(script));
