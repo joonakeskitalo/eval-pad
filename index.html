@@ -302,9 +302,15 @@
         editor.setValue(placeholderCode)
 
         const _run = () => {
+            const script = editor.getValue();
+            if (!script) {
+                removeUrlHash();
+                return;
+            }
+            setUrlHash(script)
             const startTime = performance.now();
             const original = u.input.value;
-            const func = eval(editor.getValue());
+            const func = eval(script);
             const out = func(original);
             const endTime = performance.now();
 
@@ -318,6 +324,23 @@
         };
 
         const run = debounce(_run, 400);
+
+        const removeUrlHash = () => {
+            window.location = window.location.href.split('#')[0]
+        }
+
+        const setUrlHash = (script) => {
+            const encoded = decodeURIComponent(btoa(script));
+            window.location.hash = `#${encoded}`
+        }
+        const getScriptFromUrlHash = () => {
+            const hash = window.location.hash.substring(1);
+            if (hash) {
+                const script = decodeURIComponent(atob(hash))
+                editor.setValue(script)
+            }
+        }
+        getScriptFromUrlHash()
     </script>
 </body>
 
