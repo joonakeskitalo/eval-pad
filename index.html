@@ -297,7 +297,7 @@
             },
         });
 
-        const placeholderCode = "(input) => {\n  const lines = input.split(\"\\n\").filter((x) => x);\n  const uniqueLines = [...new Set(lines)];\n\n  return uniqueLines.join(\"\\n\");\n};"
+        const placeholderCode = "(arg) => {\n  return arg;\n}"
 
         editor.setValue(placeholderCode)
 
