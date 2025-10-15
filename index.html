@@ -1,340 +1,362 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Eval</title>
-    <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22256%22 height=%22256%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23fdfdfd%22></rect><text x=%2250%%22 y=%2250%%22 dominant-baseline=%22central%22 text-anchor=%22middle%22 font-size=%2270%22>💻</text></svg>" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22256%22 height=%22256%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23fdfdfd%22></rect><text x=%2250%%22 y=%2250%%22 dominant-baseline=%22central%22 text-anchor=%22middle%22 font-size=%2270%22>💻</text></svg>"
+    />
     <link rel="stylesheet" href="./codemirror/codemirror.css" />
     <script src="./codemirror/codemirror.js"></script>
     <script src="./codemirror/javascript.js"></script>
     <script src="./codemirror/matchbrackets.js"></script>
     <script src="./codemirror/closebrackets.js"></script>
     <style>
-        :root {
-            --color-background: #ffffff;
-            --color-text: #161616;
-            --font-family: Lexend, system-ui, -apple-system, BlinkMacSystemFont,
-                "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
-                sans-serif;
-            --font-family-monospace: 'DM Mono', "Noto Sans Mono", "Roboto Mono" monospace;
-            --font-size: 9.5pt;
+      :root {
+        --color-background: #ffffff;
+        --color-text: #161616;
+        --font-family: Lexend, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+          "Helvetica Neue", sans-serif;
+        --font-family-monospace: "DM Mono", "Noto Sans Mono",
+          "Roboto Mono" monospace;
+        --font-size: 9.5pt;
+      }
+
+      html,
+      body {
+        height: 100%;
+        padding: 0;
+        margin: 0;
+      }
+
+      body {
+        background-color: var(--color-background);
+        color: var(--color-text);
+        font-family: var(--font-family);
+      }
+
+      input,
+      textarea {
+        font-family: var(--font-family-monospace);
+        font-size: var(--font-size);
+      }
+
+      input,
+      label {
+        display: block;
+        padding: 0;
+        background-color: var(--color-background);
+      }
+
+      button {
+        appearance: none;
+        background-color: #fafbfc;
+        border: 1px solid rgba(27, 31, 35, 0.15);
+        box-shadow: rgba(27, 31, 35, 0.04) 0 1px 0,
+          rgba(255, 255, 255, 0.25) 0 1px 0 inset;
+        box-sizing: border-box;
+        color: #24292e;
+        cursor: pointer;
+        display: inline-block;
+        font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial,
+          sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 20px;
+        padding: 6px 16px;
+        position: relative;
+        transition: background-color 0.2s cubic-bezier(0.3, 0, 0.5, 1);
+        user-select: none;
+        -webkit-user-select: none;
+      }
+
+      button:active {
+        background-color: #edeff2;
+        box-shadow: rgba(225, 228, 232, 0.2) 0 1px 0 inset;
+        transition: none 0s;
+      }
+
+      button:focus {
+        outline: 1px transparent;
+      }
+
+      button:before {
+        display: none;
+      }
+
+      button:-webkit-details-marker {
+        display: none;
+      }
+
+      table,
+      tr {
+        border: 1px solid black;
+      }
+
+      #presets {
+        padding: 4px;
+        background-color: #f7f7f7;
+        border-top: 1px solid #dddddd;
+        overflow-x: scroll;
+        display: flex;
+        flex-direction: row;
+      }
+
+      .chip {
+        font-size: 8pt;
+        padding: 4px 10px;
+        margin: 2px;
+        margin-left: 3px;
+        border-radius: 15em;
+        border: 1px solid lightgrey;
+        white-space: nowrap;
+      }
+
+      .CodeMirror {
+        max-width: 100%;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: row;
+        height: 100%;
+
+        & textarea {
+          background-color: #0e1019;
+          border: none;
+          box-sizing: border-box;
+          color: white;
+          font-size: 11pt;
+          height: 95%;
+          margin: 0;
+          outline: none;
+          padding: 0;
+          text-wrap: nowrap;
+          width: 100%;
+          padding: 8px;
+          resize: none;
         }
 
-        html,
-        body {
-            height: 100%;
-            padding: 0;
-            margin: 0;
+        & > .c {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          max-width: 50%;
+          width: 50%;
+
+          & > div {
+            flex: 1;
+          }
+
+          & > details {
+            padding: 12px;
+          }
         }
 
-        body {
-            background-color: var(--color-background);
-            color: var(--color-text);
-            font-family: var(--font-family);
-        }
+        & > .c-result {
+          background-color: #0e1019;
+          padding: 8px 12px;
+          color: white;
 
-        input,
-        textarea {
-            font-family: var(--font-family-monospace);
-            font-size: var(--font-size);
-        }
-
-        input,
-        label {
-            display: block;
-            padding: 0;
-            background-color: var(--color-background);
-        }
-
-        button {
-            appearance: none;
-            background-color: #fafbfc;
-            border: 1px solid rgba(27, 31, 35, 0.15);
-            box-shadow: rgba(27, 31, 35, 0.04) 0 1px 0,
-                rgba(255, 255, 255, 0.25) 0 1px 0 inset;
-            box-sizing: border-box;
-            color: #24292e;
-            cursor: pointer;
-            display: inline-block;
-            font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial,
-                sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-            font-size: 14px;
-            font-weight: 500;
-            line-height: 20px;
-            padding: 6px 16px;
-            position: relative;
-            transition: background-color 0.2s cubic-bezier(0.3, 0, 0.5, 1);
-            user-select: none;
-            -webkit-user-select: none;
-        }
-
-        button:active {
-            background-color: #edeff2;
-            box-shadow: rgba(225, 228, 232, 0.2) 0 1px 0 inset;
-            transition: none 0s;
-        }
-
-        button:focus {
-            outline: 1px transparent;
-        }
-
-        button:before {
-            display: none;
-        }
-
-        button:-webkit-details-marker {
-            display: none;
-        }
-
-
-        table,
-        tr {
-            border: 1px solid black;
-        }
-
-        #presets {
-            padding: 4px;
-            background-color: #f7f7f7;
-            border-top: 1px solid #dddddd;
-            overflow-x: scroll;
+          & > div {
             display: flex;
-            flex-direction: row;
-        }
+            flex-direction: column;
+            resize: vertical;
+            overflow: auto;
+            flex: unset;
+            height: 50%;
 
-        .chip {
-            font-size: 8pt;
-            padding: 4px 10px;
-            margin: 2px;
-            margin-left: 3px;
-            border-radius: 15em;
-            border: 1px solid lightgrey;
-            white-space: nowrap;
-        }
-
-        .CodeMirror {
-            max-width: 100%;
-        }
-
-        .container {
-            display: flex;
-            flex-direction: row;
-            height: 100%;
-
-            & textarea {
-                background-color: #0e1019;
-                border: none;
-                box-sizing: border-box;
-                color: white;
-                font-size: 11pt;
-                height: 95%;
-                margin: 0;
-                outline: none;
-                padding: 0;
-                text-wrap: nowrap;
-                width: 100%;
-                padding: 8px;
-                resize: none;
+            & b,
+            span {
+              padding: 8px 0;
+              font-size: 10pt;
+              color: #c0c0c0;
             }
+          }
 
-            &>.c {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-                max-width: 50%;
-                width: 50%;
-
-                &>div {
-                    flex: 1;
-                }
-
-                &>details {
-                    padding: 12px;
-                }
-            }
-
-            &>.c-result {
-                background-color: #0e1019;
-                padding: 8px 12px;
-                color: white;
-
-                &>div {
-                    display: flex;
-                    flex-direction: column;
-                    resize: vertical;
-                    overflow: auto;
-                    flex: unset;
-                    height: 50%;
-
-                    & b,
-                    span {
-                        padding: 8px 0;
-                        font-size: 10pt;
-                        color: #c0c0c0;
-                    }
-                }
-
-                &>div:nth-child(1) {
-                    border-bottom: 1px solid #5e5e5e;
-                    padding-bottom: 8px;
-                    margin-bottom: 8px;
-                }
-            }
+          & > div:nth-child(1) {
+            border-bottom: 1px solid #5e5e5e;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+          }
         }
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="container">
-        <div class="c">
-            <textarea name="q" style="flex: 1;" spellcheck="false" id="func-input" cols="30" rows="12"
-                placeholder="Function…"></textarea>
+      <div class="c">
+        <textarea
+          name="q"
+          style="flex: 1"
+          spellcheck="false"
+          id="func-input"
+          cols="30"
+          rows="12"
+          placeholder="Function…"
+        ></textarea>
 
+        <div style="display: flex; flex-direction: column; flex: 0">
+          <div id="presets"></div>
 
-            <div style="display: flex; flex-direction: column; flex: 0;">
-
-                <div id="presets"></div>
-
-                <div style="display: flex; flex-direction: row; flex: 1;">
-                    <button style="flex: 1;" onclick="setUrlHash()">Share script</button>
-                    <button style="flex: 1;" onclick="run">Run (shift-space)</button>
-                </div>
-            </div>
+          <div style="display: flex; flex-direction: row; flex: 1">
+            <button style="flex: 1" onclick="setUrlHash()">Share script</button>
+            <button style="flex: 1" onclick="run">Run (shift-space)</button>
+          </div>
         </div>
-        <div class="c c-result">
-            <div>
-                <div>
-                    <b>Input:</b>
-                    <span id="input-size"></span>
-                </div>
-                <textarea name="q" spellcheck="false" oninput="run()" id="input"></textarea>
-            </div>
-            <div>
-                <div>
-                    <b>Output:</b>
-                    <span id="output-size"></span>
-                </div>
-                <textarea spellcheck="false" name="q" id="output"></textarea>
-            </div>
-            <span style="font-size: 9pt" id="execution-time"></span>
+      </div>
+      <div class="c c-result">
+        <div>
+          <div>
+            <b>Input:</b>
+            <span id="input-size"></span>
+          </div>
+          <textarea
+            name="q"
+            spellcheck="false"
+            oninput="run()"
+            id="input"
+          ></textarea>
         </div>
+        <div>
+          <div>
+            <b>Output:</b>
+            <span id="output-size"></span>
+          </div>
+          <textarea spellcheck="false" name="q" id="output"></textarea>
+        </div>
+        <span style="font-size: 9pt" id="execution-time"></span>
+      </div>
     </div>
 
     <script>
-        const debounce = (callback, wait) => {
-            let timerId;
-            return (...args) => {
-                clearTimeout(timerId);
-                timerId = setTimeout(() => {
-                    callback(...args);
-                }, wait);
-            };
+      const debounce = (callback, wait) => {
+        let timerId;
+        return (...args) => {
+          clearTimeout(timerId);
+          timerId = setTimeout(() => {
+            callback(...args);
+          }, wait);
         };
+      };
 
+      const getEl = (id) => document.getElementById(id);
+      const u = {
+        input: getEl("input"),
+        funcInput: getEl("func-input"),
+        out: getEl("output"),
+        executionTime: getEl("execution-time"),
+        inputSize: getEl("input-size"),
+        outputSize: getEl("output-size"),
+        presets: getEl("presets"),
+      };
 
-        const getEl = (id) => document.getElementById(id);
-        const u = {
-            input: getEl("input"),
-            funcInput: getEl("func-input"),
-            out: getEl("output"),
-            executionTime: getEl("execution-time"),
-            inputSize: getEl("input-size"),
-            outputSize: getEl("output-size"),
-            presets: getEl("presets")
-        };
+      const presets = {
+        "Parse JSON":
+          "KGlucHV0KSA9PiB7Cgljb25zdCBqc29uID0gSlNPTi5wYXJzZShpbnB1dCkKICAKICAKICByZXR1cm4gSlNPTi5zdHJpbmdpZnkoanNvbixudWxsLDIpCn07",
+        "Trim lines":
+          "KGlucHV0KSA9PgogIGlucHV0CiAgICAuc3BsaXQoIlxuIikKICAgIC5tYXAoKHgpID0+IHgudHJpbSgpKQogICAgLmpvaW4oIlxuIik7",
+        "Get unique lines":
+          "KGlucHV0KSA9PiB7CiAgY29uc3QgbGluZXMgPSBpbnB1dAogICAgLnNwbGl0KCJcbiIpCiAgICAuc29ydCgpCiAgICAuZmlsdGVyKCh4KSA9PiB4KTsKCiAgcmV0dXJuIFsuLi5uZXcgU2V0KGxpbmVzKV0uam9pbigiXG4iKTsKfTs=",
+        "Wrap lines in quotes":
+          "KGlucHV0KSA9PgogIGlucHV0CiAgICAuc3BsaXQoIlxuIikKICAgIC5zb3J0KCkKICAgIC5maWx0ZXIoKHgpID0+IHgpCiAgICAubWFwKCh4KSA9PiBgIiR7eH0iLGApCiAgICAuam9pbigiXG4iKTs=",
+        "To base64": "KHgpID0+IGJ0b2EoeCk7",
+        "From base64": "KHgpID0+IGF0b2IoeCk7",
+      };
 
-        const presets = {
-            "Parse JSON": "KGlucHV0KSA9PiB7Cgljb25zdCBqc29uID0gSlNPTi5wYXJzZShpbnB1dCkKICAKICAKICByZXR1cm4gSlNPTi5zdHJpbmdpZnkoanNvbixudWxsLDIpCn07",
-            "Trim lines": "KGlucHV0KSA9PgogIGlucHV0CiAgICAuc3BsaXQoIlxuIikKICAgIC5tYXAoKHgpID0+IHgudHJpbSgpKQogICAgLmpvaW4oIlxuIik7",
-            "Get unique lines": "KGlucHV0KSA9PiB7CiAgY29uc3QgbGluZXMgPSBpbnB1dAogICAgLnNwbGl0KCJcbiIpCiAgICAuc29ydCgpCiAgICAuZmlsdGVyKCh4KSA9PiB4KTsKCiAgcmV0dXJuIFsuLi5uZXcgU2V0KGxpbmVzKV0uam9pbigiXG4iKTsKfTs=",
-            "Wrap lines in quotes": "KGlucHV0KSA9PgogIGlucHV0CiAgICAuc3BsaXQoIlxuIikKICAgIC5zb3J0KCkKICAgIC5maWx0ZXIoKHgpID0+IHgpCiAgICAubWFwKCh4KSA9PiBgIiR7eH0iLGApCiAgICAuam9pbigiXG4iKTs=",
-            "To base64": "KHgpID0+IGJ0b2EoeCk7",
-            "From base64": "KHgpID0+IGF0b2IoeCk7",
+      const insertPresetDeep = (key) => {
+        editor.getDoc().setValue(atob(presets[key]));
+        _run();
+      };
 
-        };
+      Object.keys(presets).forEach((k) => {
+        const button = document.createElement("button");
+        button.onclick = () => insertPresetDeep(k);
+        button.className = "chip";
+        button.innerText = k;
+        u.presets.appendChild(button);
+      });
 
-        const insertPresetDeep = (key) => {
-            editor.getDoc().setValue(atob(presets[key]));
-            _run();
-        };
-
-        Object.keys(presets).forEach((k) => {
-            const button = document.createElement("button");
-            button.onclick = () => insertPresetDeep(k);
-            button.className = "chip";
-            button.innerText = k;
-            u.presets.appendChild(button);
-        });
-
-        const editor = CodeMirror.fromTextArea(document.getElementById("func-input"), {
-            lineNumbers: true,
-            mode: "javascript",
-            matchBrackets: true,
-            autoCloseBrackets: true,
-            tabSize: 2,
-        })
-
-        editor.setOption("extraKeys", {
-            "Shift-Space": function (cm) {
-                _run();
-                return cm;
-            },
-        });
-
-        const placeholderCode = "(arg) => {\n  return arg;\n}"
-
-        editor.setValue(placeholderCode)
-
-        const _run = () => {
-            const script = editor.getValue();
-            if (!script) {
-                removeUrlHash();
-                return;
-            }
-            const startTime = performance.now();
-            const original = u.input.value;
-            const func = eval(script);
-            const out = func(original);
-            const endTime = performance.now();
-
-            u.executionTime.innerText = `Execution time: ${endTime - startTime} ms`;
-            u.out.value = `${out}`;
-
-            const percentageOfOriginal = (out.length / original.length) * 100
-            const percentageOfOriginalStr = !isNaN(percentageOfOriginal) ? `, ${Math.ceil(percentageOfOriginal)}% of original` : ""
-            u.inputSize.innerText = `${original.length} characters, ${original.split("\n").length} lines`
-            u.outputSize.innerText = `${out.length} characters, ${out.split("\n").length} lines${percentageOfOriginalStr}`
-        };
-
-        const run = debounce(_run, 400);
-
-        const removeUrlHash = () => {
-            window.location = window.location.href.split('#')[0]
+      const editor = CodeMirror.fromTextArea(
+        document.getElementById("func-input"),
+        {
+          lineNumbers: true,
+          mode: "javascript",
+          matchBrackets: true,
+          autoCloseBrackets: true,
+          tabSize: 2,
         }
+      );
 
-        const setUrlHash = () => {
-            const script = editor.getValue();
-            if (!script) {
-                removeUrlHash();
-                return;
-            }
-            const encoded = btoa(script);
-            window.location.hash = `#${encoded}`
+      editor.setOption("extraKeys", {
+        "Shift-Space": function (cm) {
+          _run();
+          return cm;
+        },
+      });
+
+      const placeholderCode = "(arg) => {\n  return arg;\n}";
+
+      editor.setValue(placeholderCode);
+
+      const _run = () => {
+        const script = editor.getValue();
+        if (!script) {
+          removeUrlHash();
+          return;
         }
+        const startTime = performance.now();
+        const original = u.input.value;
+        const func = eval(script);
+        const out = func(original);
+        const endTime = performance.now();
 
-        const getScriptFromUrlHash = () => {
-            const hash = window.location.hash.substring(1);
+        u.executionTime.innerText = `Execution time: ${endTime - startTime} ms`;
+        u.out.value = `${out}`;
 
-            if (hash) {
-                const decoded = atob(hash);
-                editor.setValue(decoded)
-            }
+        const percentageOfOriginal = (out.length / original.length) * 100;
+        const percentageOfOriginalStr = !isNaN(percentageOfOriginal)
+          ? `, ${Math.ceil(percentageOfOriginal)}% of original`
+          : "";
+        u.inputSize.innerText = `${original.length} characters, ${
+          original.split("\n").length
+        } lines`;
+        u.outputSize.innerText = `${out.length} characters, ${
+          out.split("\n").length
+        } lines${percentageOfOriginalStr}`;
+      };
+
+      const run = debounce(_run, 400);
+
+      const removeUrlHash = () => {
+        window.location = window.location.href.split("#")[0];
+      };
+
+      const setUrlHash = () => {
+        const script = editor.getValue();
+        if (!script) {
+          removeUrlHash();
+          return;
         }
-        getScriptFromUrlHash()
+        const encoded = btoa(script);
+        window.location.hash = `#${encoded}`;
+      };
+
+      const getScriptFromUrlHash = () => {
+        const hash = window.location.hash.substring(1);
+
+        if (hash) {
+          const decoded = atob(hash);
+          editor.setValue(decoded);
+        }
+      };
+      getScriptFromUrlHash();
     </script>
-</body>
-
+  </body>
 </html>
