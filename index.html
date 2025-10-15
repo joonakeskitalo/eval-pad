@@ -321,15 +321,16 @@
                 removeUrlHash();
                 return;
             }
-            const encoded = decodeURIComponent(btoa(script));
+            const encoded = btoa(script);
             window.location.hash = `#${encoded}`
         }
 
         const getScriptFromUrlHash = () => {
             const hash = window.location.hash.substring(1);
+
             if (hash) {
-                const script = decodeURIComponent(atob(hash))
-                editor.setValue(script)
+                const decoded = atob(hash);
+                editor.setValue(decoded)
             }
         }
         getScriptFromUrlHash()
