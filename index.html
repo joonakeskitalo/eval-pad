@@ -302,7 +302,6 @@
       });
 
       const placeholderCode = "(arg) => {\n  return arg;\n}";
-
       editor.setValue(placeholderCode);
 
       const _run = () => {
@@ -320,16 +319,8 @@
         u.executionTime.innerText = `Execution time: ${endTime - startTime} ms`;
         u.out.value = `${out}`;
 
-        const percentageOfOriginal = (out.length / original.length) * 100;
-        const percentageOfOriginalStr = !isNaN(percentageOfOriginal)
-          ? `, ${Math.ceil(percentageOfOriginal)}% of original`
-          : "";
-        u.inputSize.innerText = `${original.length} characters, ${
-          original.split("\n").length
-        } lines`;
-        u.outputSize.innerText = `${out.length} characters, ${
-          out.split("\n").length
-        } lines${percentageOfOriginalStr}`;
+        u.inputSize.innerText = `${original.length} characters`;
+        u.outputSize.innerText = `${out.length} characters`;
       };
 
       const run = debounce(_run, 400);
