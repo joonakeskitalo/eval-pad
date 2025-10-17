@@ -325,43 +325,54 @@
 
       const run = debounce(_run, 400);
 
-      const removeUrlHash = () => {
-        window.location = window.location.href.split("#")[0];
-      };
-
-      const fromBinary = (encoded) => {
-        const binary = atob(encoded);
-        const bytes = new Uint8Array(binary.length);
-        for (let i = 0; i < bytes.length; i++) {
-          bytes[i] = binary.charCodeAt(i);
-        }
-        return String.fromCharCode(...new Uint16Array(bytes.buffer));
-      };
-
-      const toBinary = (string) => {
-        const codeUnits = new Uint16Array(string.length);
-        for (let i = 0; i < codeUnits.length; i++) {
-          codeUnits[i] = string.charCodeAt(i);
-        }
-        return btoa(String.fromCharCode(...new Uint8Array(codeUnits.buffer)));
+      const urlSave = {
+        fromBinary: (encoded) => {
+          const binary = atob(encoded);
+          const bytes = new Uint8Array(binary.length);
+          for (let i = 0; i < bytes.length; i++) {
+            bytes[i] = binary.charCodeAt(i);
+          }
+          return String.fromCharCode(...new Uint16Array(bytes.buffer));
+        },
+        toBinary: (string) => {
+          const codeUnits = new Uint16Array(string.length);
+          for (let i = 0; i < codeUnits.length; i++) {
+            codeUnits[i] = string.charCodeAt(i);
+          }
+          return btoa(String.fromCharCode(...new Uint8Array(codeUnits.buffer)));
+        },
+        remove: () => {
+          window.location = window.location.href.split("#")[0];
+        },
+        set: (value) => {
+          if (!value) {
+            urlSave.remove();
+            return;
+          }
+          window.location.hash = `#${urlSave.toBinary(value)}`;
+        },
+        get: () => {
+          const hash = window.location.hash.substring(1);
+          if (hash) {
+            const decoded = urlSave.fromBinary(hash);
+            return decoded;
+          }
+        },
       };
 
       const setUrlHash = () => {
         const script = editor.getValue();
         if (!script) {
-          removeUrlHash();
+          urlSave.remove();
           return;
         }
-        const asBinary = toBinary(script);
-        window.location.hash = `#${asBinary}`;
+        urlSave.set(script);
       };
 
       const getScriptFromUrlHash = () => {
-        const hash = window.location.hash.substring(1);
-
-        if (hash) {
-          const decoded = fromBinary(hash);
-          editor.setValue(decoded);
+        const result = urlSave.get();
+        if (result) {
+          editor.setValue(result);
         }
       };
       getScriptFromUrlHash();
