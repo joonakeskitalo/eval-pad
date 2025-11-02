@@ -1,0 +1,169 @@
+:root {
+  --color-background: #ffffff;
+  --color-text: #161616;
+  --font-family: Lexend, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+    sans-serif;
+  --font-family-monospace: "DM Mono", "Noto Sans Mono", "Roboto Mono" monospace;
+  --font-size: 9.5pt;
+}
+
+html,
+body {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-family);
+}
+
+input,
+textarea {
+  font-family: var(--font-family-monospace);
+  font-size: var(--font-size);
+}
+
+input,
+label {
+  display: block;
+  padding: 0;
+  background-color: var(--color-background);
+}
+
+button {
+  appearance: none;
+  background-color: #fafbfc;
+  border: 1px solid rgba(27, 31, 35, 0.15);
+  box-shadow: rgba(27, 31, 35, 0.04) 0 1px 0,
+    rgba(255, 255, 255, 0.25) 0 1px 0 inset;
+  box-sizing: border-box;
+  color: #24292e;
+  cursor: pointer;
+  display: inline-block;
+  font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  padding: 6px 16px;
+  position: relative;
+  transition: background-color 0.2s cubic-bezier(0.3, 0, 0.5, 1);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+button:active {
+  background-color: #edeff2;
+  box-shadow: rgba(225, 228, 232, 0.2) 0 1px 0 inset;
+  transition: none 0s;
+}
+
+button:focus {
+  outline: 1px transparent;
+}
+
+button:before {
+  display: none;
+}
+
+button:-webkit-details-marker {
+  display: none;
+}
+
+table,
+tr {
+  border: 1px solid black;
+}
+
+#presets {
+  padding: 4px;
+  background-color: #f7f7f7;
+  border-top: 1px solid #dddddd;
+  overflow-x: scroll;
+  display: flex;
+  flex-direction: row;
+}
+
+.chip {
+  font-size: 8pt;
+  padding: 4px 10px;
+  margin: 2px;
+  margin-left: 3px;
+  border-radius: 15em;
+  border: 1px solid lightgrey;
+  white-space: nowrap;
+}
+
+.CodeMirror {
+  max-width: 100%;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+
+  & textarea {
+    background-color: #0e1019;
+    border: none;
+    box-sizing: border-box;
+    color: white;
+    font-size: 11pt;
+    height: 95%;
+    margin: 0;
+    outline: none;
+    padding: 0;
+    text-wrap: nowrap;
+    width: 100%;
+    padding: 8px;
+    resize: none;
+  }
+
+  &>.c {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 50%;
+    width: 50%;
+
+    &>div {
+      flex: 1;
+    }
+
+    &>details {
+      padding: 12px;
+    }
+  }
+
+  &>.c-result {
+    background-color: #0e1019;
+    padding: 8px 12px;
+    color: white;
+
+    &>div {
+      display: flex;
+      flex-direction: column;
+      resize: vertical;
+      overflow: auto;
+      flex: unset;
+      height: 50%;
+
+      & b,
+      span {
+        padding: 8px 0;
+        font-size: 10pt;
+        color: #c0c0c0;
+      }
+    }
+
+    &>div:nth-child(1) {
+      border-bottom: 1px solid #5e5e5e;
+      padding-bottom: 8px;
+      margin-bottom: 8px;
+    }
+  }
+}
